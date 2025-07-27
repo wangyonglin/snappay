@@ -1,67 +1,58 @@
 package com.wangyonglin.snappay.controller;
 
-import com.wangyonglin.snappay.common.result.R;
+import com.wangyonglin.snappay.config.WechatConfiguration;
+import com.wangyonglin.snappay.exception.WechatException;
+import com.wangyonglin.snappay.modules.SnowflakeIdGenerator;
+import com.wangyonglin.snappay.result.R;
 
 import com.wangyonglin.snappay.impl.WechatPayServiceImpl;
+import com.wangyonglin.snappay.service.WechatPayService;
+import com.wechat.pay.java.core.exception.ServiceException;
+import com.wechat.pay.java.service.payments.jsapi.model.PrepayWithRequestPaymentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 @Slf4j
 @RestController
-//@RequestMapping("/wechatpay")
 @Repository
-public class WechatPayController {
+@RequiredArgsConstructor
+public class WechatController  extends WebFluxController{
+
+    private final WechatConfiguration configuration;
+    private SnowflakeIdGenerator snowflake = new SnowflakeIdGenerator(1,12);
+    private  WechatPayService service= new WechatPayServiceImpl();
 
 
-    private WechatPayServiceImpl service;
-
-    @GetMapping("/unifiedOrder")
-    public Mono<R> unifiedOrder() {
-         R<String> dd= R.ok().data("wangyonglin");
-        return Mono.just(dd);
-    }
-
-   // @GetMapping("/test")
-    public Mono<ServerResponse> test(ServerRequest request) {
-
-        java.util.Optional<String> id= request.queryParam("id");
-        if(!id.isEmpty()){
-
+    public Mono<ServerResponse> prepay(ServerRequest request) {
+        PrepayWithRequestPaymentResponse response;
+        String outTradeNo= String.valueOf(snowflake.nextId());
+       String userOpenId= request.queryParam("userOpenId").get();
+        log.info("outTradeNo:"+outTradeNo);
+        log.info("userOpenId:"+userOpenId);
+        log.info("privateKeyPath:"+configuration.getPrivateKeyPath());
+        try {
+             response=service.prepay(
+                    configuration,
+                    100,
+                    "wangyonglin",
+                    outTradeNo,
+                    userOpenId);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            return R.fail(e.getMessage()).build();
         }
-        Mono<ServerResponse> render = ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(id.get());
-
-        return render;
+        return R.ok().data(response).build();
     }
 
-
-//    public Mono<ServerResponse> getUserById(ServerRequest request) {
-//        try {
-//            Integer id = Integer.valueOf(request.pathVariable("id"));
-//            return userService.getUserById(id)
-//                    .flatMap(user -> ServerResponse.ok()
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .body(BodyInserters.fromValue(user)))
-//                    .switchIfEmpty(ServerResponse.notFound().build());
-//        } catch (NumberFormatException e) {
-//            return ServerResponse.badRequest()
-//                    .body(BodyInserters.fromValue("Invalid ID format"));
-//        }
-//    }
-
+    public Mono<ServerResponse> notifyUrl(ServerRequest request){
+        return R.ok().data("支付成功").build();
+    }
 }

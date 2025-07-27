@@ -1,4 +1,4 @@
-package com.wangyonglin.snappay.common.model;
+package com.wangyonglin.snappay.modules;
 
 
 public class SnowflakeIdGenerator {

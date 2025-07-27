@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Timer;
 
 /**
  * 响应信息主体
@@ -26,30 +27,32 @@ public class R<T> implements Serializable
     public static final int FAIL = HttpStatus.ERROR;
 
     private int code;
-
     private String message;
-
     private T data;
 
     public static <T> R<T> ok()
     {
-        return create(null, SUCCESS, "操作成功");
+        return construct(null, SUCCESS, "操作成功");
     }
 
 
     public static <T> R<T> error()
     {
-        return create(null, FAIL, "操作失败");
+        return construct(null, FAIL, "操作失败");
     }
-
+    public static <T> R<T> error(int error)
+    {
+        return construct(null, error, "未知错误");
+    }
     public static <T> R<T> error(ErrorMessage error)
     {
-        return create(null, error.getCode(), error.getMessage());
+
+        return construct(null, error.getCode(), error.getMessage());
     }
 
 
 
-    private static <T> R<T> create(T data, int code, String message)
+    private static <T> R<T> construct(T data, int code, String message)
     {
         R<T> apiResult = new R<>();
         apiResult.setCode(code);
@@ -73,11 +76,11 @@ public class R<T> implements Serializable
 
     public   <T> R<T> message(String message){
 
-        return create(null,getCode(),message);
+        return construct(null,getCode(),message);
 
     }
     public  <T> R<T> data(T t){
 
-        return create(t,getCode(),getMessage());
+        return construct(t,getCode(),getMessage());
     }
 }

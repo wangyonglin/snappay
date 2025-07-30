@@ -8,6 +8,7 @@ import com.wangyonglin.webflux.result.R;
 import com.wangyonglin.snappay.impl.WechatPayServiceImpl;
 import com.wangyonglin.snappay.service.WechatPayService;
 import com.wangyonglin.wechat.NotificationResult;
+import com.wangyonglin.wechat.WechatException;
 import com.wechat.pay.java.core.exception.ServiceException;
 import com.wechat.pay.java.core.exception.ValidationException;
 import com.wechat.pay.java.core.notification.NotificationParser;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -34,26 +36,25 @@ public class WechatController  extends WebFluxController {
     private SnowflakeIdGenerator snowflake = new SnowflakeIdGenerator(1,12);
     private  WechatPayService service= new WechatPayServiceImpl();
 
-
     public Mono<ServerResponse> prepay(ServerRequest request) {
-        PrepayWithRequestPaymentResponse response;
-        String outTradeNo= String.valueOf(snowflake.nextId());
-       String userOpenId= request.queryParam("userOpenId").get();
-        log.info("outTradeNo:"+outTradeNo);
-        log.info("userOpenId:"+userOpenId);
-        log.info("privateKeyPath:"+configuration.getPrivateKeyPath());
+        return request.formData().flatMap(form -> {
+             String outTradeNo= String.valueOf(snowflake.nextId());
+        Assert.isTrue(isNotEmpty(outTradeNo), "The parameter 'outTradeNo' cannot be empty or null!");
+        String userOpenId= request.queryParam("userOpenId").orElse("");
+        Assert.isTrue(isNotEmpty(userOpenId), "The parameter 'userOpenId' cannot be empty or null!");
         try {
-             response=service.prepay(
+            PrepayWithRequestPaymentResponse   response=service.prepay(
                     configuration,
                     100,
                     "wangyonglin",
                     outTradeNo,
                     userOpenId);
+            return bodyValue(response);
         } catch (ServiceException e) {
-            e.printStackTrace();
-            return R.fail(e.getMessage()).build();
+            return Mono.error(e);
         }
-        return R.ok().data(response).build();
+        }).onErrorResume(this::errorValue);
+
     }
 
 

@@ -1,4 +1,4 @@
-package com.wangyonglin.wechat;
+package com.wangyonglin.snappay.exception;
 
 import lombok.Getter;
 

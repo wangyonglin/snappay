@@ -1,7 +1,6 @@
 package com.wangyonglin.snappay.impl;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.wangyonglin.snappay.config.WechatConfiguration;
 import com.wangyonglin.snappay.service.WechatPayService;
 import com.wechat.pay.java.core.Config;
 import com.wechat.pay.java.core.exception.ServiceException;
@@ -21,13 +20,15 @@ public class WechatPayServiceImpl implements WechatPayService {
 
 
     @Override
-    public PrepayWithRequestPaymentResponse prepay(WechatConfiguration configuration,
-                                                    Integer total,
-                                                    String productTitle,
-                                                    String outTradeNo,
-                                                    String userOpenId) throws ServiceException{
-        // 使用单例模式获取配置
-        Config config = configuration.rsaAutoCertificateConfig();
+    public PrepayWithRequestPaymentResponse prepay(Config config,
+                                                   String appId,
+                                                   String merchantId,
+                                                   String notifyUrl,
+                                                   Integer total,
+                                                   String productTitle,
+                                                   String outTradeNo,
+                                                   String userOpenId) throws ServiceException{
+
         // 构建service
         JsapiServiceExtension service = new JsapiServiceExtension.Builder().config(config).signType("RSA").build();
         // request.setXxx(val)设置所需参数，具体参数可见Request定义
@@ -37,12 +38,12 @@ public class WechatPayServiceImpl implements WechatPayService {
         amount.setTotal(total);
         amount.setCurrency("CNY");
         request.setAmount(amount);
-        request.setAppid(configuration.getAppId());
-        request.setMchid(configuration.getMerchantId());
+        request.setAppid(appId);
+        request.setMchid(merchantId);
         // 支付项目名称
         request.setDescription(productTitle);
         // 回调地址
-        request.setNotifyUrl(configuration.getNotifyUrl());
+        request.setNotifyUrl(notifyUrl);
         // 交易编号
         request.setOutTradeNo(outTradeNo);
         Payer payer = new Payer();

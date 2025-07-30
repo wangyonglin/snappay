@@ -1,9 +1,9 @@
-package com.wangyonglin.snappay.config;
+package com.wangyonglin.snappay.core;
 
+import com.wangyonglin.snappay.config.WechatProperties;
 import com.wangyonglin.snappay.results.R;
 import com.wangyonglin.snappay.exception.WechatException;
 import com.wechat.pay.java.core.RSAAutoCertificateConfig;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;

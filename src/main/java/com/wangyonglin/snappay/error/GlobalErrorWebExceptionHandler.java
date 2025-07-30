@@ -1,7 +1,7 @@
-package com.wangyonglin.webflux.error;
+package com.wangyonglin.snappay.error;
 
 
-import com.wangyonglin.webflux.result.R;
+import com.wangyonglin.snappay.results.R;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;

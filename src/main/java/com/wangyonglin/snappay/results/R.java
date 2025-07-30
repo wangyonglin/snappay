@@ -1,4 +1,4 @@
-package com.wangyonglin.webflux.result;
+package com.wangyonglin.snappay.results;
 
 import com.alibaba.fastjson2.JSON;
 import lombok.Getter;

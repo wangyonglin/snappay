@@ -1,4 +1,4 @@
-package com.wangyonglin.wechat;
+package com.wangyonglin.snappay.results;
 
 import lombok.Getter;
 import lombok.Setter;

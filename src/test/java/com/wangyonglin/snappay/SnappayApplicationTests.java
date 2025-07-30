@@ -1,6 +1,7 @@
 package com.wangyonglin.snappay;
 
-import com.wangyonglin.snappay.common.modules.SnowflakeIdGenerator;
+
+import com.wangyonglin.modules.SnowflakeIdGenerator;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

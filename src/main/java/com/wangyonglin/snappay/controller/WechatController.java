@@ -1,14 +1,11 @@
 package com.wangyonglin.snappay.controller;
 
-import com.wangyonglin.webflux.controller.WebFluxController;
-import com.wangyonglin.snappay.config.WechatConfiguration;
+import com.wangyonglin.snappay.core.WechatObject;
 import com.wangyonglin.modules.SnowflakeIdGenerator;
-import com.wangyonglin.webflux.result.R;
 
 import com.wangyonglin.snappay.impl.WechatPayServiceImpl;
 import com.wangyonglin.snappay.service.WechatPayService;
-import com.wangyonglin.wechat.NotificationResult;
-import com.wangyonglin.wechat.WechatException;
+import com.wangyonglin.snappay.results.NotificationResult;
 import com.wechat.pay.java.core.exception.ServiceException;
 import com.wechat.pay.java.core.exception.ValidationException;
 import com.wechat.pay.java.core.notification.NotificationParser;
@@ -19,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -30,9 +26,8 @@ import reactor.core.publisher.Mono;
 @RestController
 @Repository
 @RequiredArgsConstructor
-public class WechatController  extends WebFluxController {
+public class WechatController  extends WechatObject {
 
-    private final WechatConfiguration configuration;
     private SnowflakeIdGenerator snowflake = new SnowflakeIdGenerator(1,12);
     private  WechatPayService service= new WechatPayServiceImpl();
 
@@ -42,9 +37,13 @@ public class WechatController  extends WebFluxController {
         Assert.isTrue(isNotEmpty(outTradeNo), "The parameter 'outTradeNo' cannot be empty or null!");
         String userOpenId= request.queryParam("userOpenId").orElse("");
         Assert.isTrue(isNotEmpty(userOpenId), "The parameter 'userOpenId' cannot be empty or null!");
+;
         try {
             PrepayWithRequestPaymentResponse   response=service.prepay(
-                    configuration,
+                    getRSAAutoCertificateConfig(),
+                    getAppId(),
+                    getMerchantId(),
+                    getNotifyUrl(),
                     100,
                     "wangyonglin",
                     outTradeNo,
@@ -60,7 +59,7 @@ public class WechatController  extends WebFluxController {
 
     @PostMapping("/notify")
     public Mono<ServerResponse> notifyUrl(ServerRequest request)  {
-        NotificationParser parser = new NotificationParser(configuration.rsaAutoCertificateConfig());
+        NotificationParser parser = new NotificationParser(getRSAAutoCertificateConfig());
        return request.bodyToMono(String.class).flatMap(val->{
            log.info(val);
            String signature = request.headers().firstHeader("Wechatpay-Signature");

@@ -1,13 +1,11 @@
 package com.wangyonglin.snappay.controller;
 
 import com.wangyonglin.snappay.core.WechatObject;
-import com.wangyonglin.snappay.results.R;
 
-import com.wechat.pay.java.core.http.MediaType;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -15,7 +13,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class AuthController extends WechatObject {
+public class UserInfoController extends WechatObject {
 
 
 
@@ -32,13 +30,17 @@ public class AuthController extends WechatObject {
                // .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/vnd.github.v3+json")
                // .defaultHeader(HttpHeaders.USER_AGENT, "Spring 5 WebClient")
                 .build();
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+//        formData.add("name", "张和");
+//        formData.add("color", "blue");
+
         return    webClient.method(HttpMethod.GET)
                 .uri("/sns/oauth2/access_token?appid={appid}&secret={appSecret}&code={js_code}&grant_type=authorization_code",
                         appid, appSecret,js_code)
+                .bodyValue(formData)
                 .retrieve()
                 .bodyToMono(String.class).flatMap(response->{
                     return bodyValue(response);
                 }).onErrorResume(this::errorValue);
-
     }
 }

@@ -19,7 +19,7 @@ public class WechatRouter
     {
                return RouterFunctions.route(RequestPredicates.GET("/wechat/prepay")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), handler::prepay)
-                        .andRoute(RequestPredicates.GET("/wechat/notifyurl")
+                        .andRoute(RequestPredicates.GET("/wechat/notify")
                                 .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), handler::notifyUrl);
     }
 }

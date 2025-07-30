@@ -1,13 +1,9 @@
 package com.wangyonglin.snappay.impl;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.wangyonglin.snappay.modules.SnowflakeIdGenerator;
-import com.wangyonglin.snappay.result.R;
 import com.wangyonglin.snappay.config.WechatConfiguration;
 import com.wangyonglin.snappay.service.WechatPayService;
 import com.wechat.pay.java.core.Config;
-import com.wechat.pay.java.core.exception.HttpException;
-import com.wechat.pay.java.core.exception.MalformedMessageException;
 import com.wechat.pay.java.core.exception.ServiceException;
 import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import com.wechat.pay.java.service.payments.jsapi.JsapiServiceExtension;

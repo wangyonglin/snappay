@@ -1,4 +1,4 @@
-package com.wangyonglin.wechat.pay;
+package com.wangyonglin.wechat;
 
 import lombok.Getter;
 import lombok.Setter;

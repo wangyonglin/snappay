@@ -1,16 +1,12 @@
-package com.wangyonglin.snappay.exception;
+package com.wangyonglin.wechat;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class WechatException extends RuntimeException {
-    private final int code;
     private final String message;
-
-    public WechatException(int code, String message) {
+    public WechatException(String message) {
         super(message);
-        this.code = code;
         this.message = message;
     }
 

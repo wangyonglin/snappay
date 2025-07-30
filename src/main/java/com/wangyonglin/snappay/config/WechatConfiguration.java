@@ -1,12 +1,8 @@
-package com.wangyonglin.snappay.config;
+package com.wangyonglin.wechat.pay;
 
 import com.wangyonglin.snappay.exception.WechatException;
-import com.wechat.pay.java.core.Config;
 import com.wechat.pay.java.core.RSAAutoCertificateConfig;
-import com.wechat.pay.java.core.RSAPublicKeyConfig;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
